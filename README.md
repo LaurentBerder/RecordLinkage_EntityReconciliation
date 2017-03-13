@@ -7,3 +7,4 @@ The external documents contained between 1 000 and 3 000 lines, while the intern
 
 
 
+The fields available for linking individuals were First Name, Last Name, Adress, Zipcode, Phone Number, Email. Of course, all of these fields are very prone to fluctuations in spelling or typing, which required the use of fuzzy logic in the searches.
