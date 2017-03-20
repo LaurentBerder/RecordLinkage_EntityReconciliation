@@ -12,32 +12,29 @@ library(bigmemory)
 options(bigmemory.typecast.warning=FALSE)
 
 
-#se situer sur le dossier ou sont les données
-setwd("C:/Users/PB00414/Desktop/Recherche/Données externes")
-
-#Fonction de suppression de caractères spéciaux
+#Fonction de suppression de caractÃ¨res spÃ©ciaux
 caractere<-function(x)
 {
-  x<-gsub('à','a',x,ignore.case = TRUE)
-  x<-gsub('â','a',x,ignore.case = TRUE)
-  x<-gsub('ä','a',x,ignore.case = TRUE)
-  x<-gsub('é','e',x,ignore.case = TRUE)
-  x<-gsub('è','e',x,ignore.case = TRUE)
-  x<-gsub('ê','e',x,ignore.case = TRUE)
-  x<-gsub('ë','e',x,ignore.case = TRUE)
-  x<-gsub('î','i',x,ignore.case = TRUE)
-  x<-gsub('ï','i',x,ignore.case = TRUE)
-  x<-gsub('ô','o',x,ignore.case = TRUE)
-  x<-gsub('ö','o',x,ignore.case = TRUE)
-  x<-gsub('ù','u',x,ignore.case = TRUE)
-  x<-gsub('û','u',x,ignore.case = TRUE)
-  x<-gsub('ü','u',x,ignore.case = TRUE)
-  x<-gsub('ç','c',x,ignore.case = TRUE)
+  x<-gsub('Ã ','a',x,ignore.case = TRUE)
+  x<-gsub('Ã¢','a',x,ignore.case = TRUE)
+  x<-gsub('Ã¤','a',x,ignore.case = TRUE)
+  x<-gsub('Ã©','e',x,ignore.case = TRUE)
+  x<-gsub('Ã¨','e',x,ignore.case = TRUE)
+  x<-gsub('Ãª','e',x,ignore.case = TRUE)
+  x<-gsub('Ã«','e',x,ignore.case = TRUE)
+  x<-gsub('Ã®','i',x,ignore.case = TRUE)
+  x<-gsub('Ã¯','i',x,ignore.case = TRUE)
+  x<-gsub('Ã´','o',x,ignore.case = TRUE)
+  x<-gsub('Ã¶','o',x,ignore.case = TRUE)
+  x<-gsub('Ã¹','u',x,ignore.case = TRUE)
+  x<-gsub('Ã»','u',x,ignore.case = TRUE)
+  x<-gsub('Ã¼','u',x,ignore.case = TRUE)
+  x<-gsub('Ã§','c',x,ignore.case = TRUE)
   x<-gsub('\\^','',x,ignore.case = TRUE)
   x<-gsub('/','',x)
   x<-gsub('-',' ',x)
   x<-gsub("[[:digit:]]","",x) #supprime les chiffres
-  x<-gsub("^\\s+|\\s+$", "", x) #supprime les espaces en début ou fin de mot  
+  x<-gsub("^\\s+|\\s+$", "", x) #supprime les espaces en dÃ©but ou fin de mot  
 }
 
 formattelephone<-function(x)
@@ -57,7 +54,7 @@ formattelephone<-function(x)
 
 
 #############################################
-##############Importer données###############
+##############Importer donnÃ©es###############
 #############################################
 regions<-read_excel("reg2016.xls",sheet="Feuille1")
 dpt<-read_excel("depts2016.xls",sheet="Feuille1")
@@ -65,10 +62,10 @@ createur<-as.data.table(read_excel("jecreemonentreprise.xls",sheet = "Dossiers")
 titulaires<-fread("Tit_Extract.csv")
 
 #############################################
-##############Préparer données###############
+##############PrÃ©parer donnÃ©es###############
 #############################################
 
-##############régions##################
+##############rÃ©gions##################
 regions<-regions[,c("REGION,C,2","NCC,C,70")]
 colnames(regions)<-c("numReg","nomReg")
 dpt<-dpt[,c("DEP,C,3","NCC,C,70","REGION,C,2")]
@@ -78,7 +75,7 @@ dpt$nomReg<-gsub("(^|[[:space:]]|\\-)([[:alpha:]])", "\\1\\U\\2", tolower(dpt$no
 dpt$nomReg <- gsub("\\-", "\n", dpt$nomReg)
 
 #############createur###############
-colnames(createur)<-c("Date","Activité","Email_Crea","Nom_Crea","Prenom_Crea","CodePostal_Crea","TelephoneF_Crea","Siret","Année création","Mois création","Pas créé","Contact","Réponses","Exporté le")
+colnames(createur)<-c("Date","ActivitÃ©","Email_Crea","Nom_Crea","Prenom_Crea","CodePostal_Crea","TelephoneF_Crea","Siret","AnnÃ©e crÃ©ation","Mois crÃ©ation","Pas crÃ©Ã©","Contact","RÃ©ponses","ExportÃ© le")
 createur$TelephoneF_Crea<-as.integer(createur$TelephoneF_Crea)
 createur$TelephoneF_Crea<-formattelephone(createur$TelephoneF_Crea)
 createur<-cbind(createur$Nom_Crea,createur$Prenom_Crea,createur$Email_Crea,createur$TelephoneF_Crea,createur$TelephoneF_Crea,createur$CodePostal_Crea,createur$Nom_Concat,createur$numReg)
@@ -94,8 +91,8 @@ createur$CodePostal_Crea[createur$CodePostal_Crea=="00000"] <- NA
 createur$CodePostal_Crea<-gsub('O','0',createur$CodePostal_Crea)
 createur$CodePostal_Crea<-gsub("[[:alpha:]]",NA,createur$CodePostal_Crea)
 createur<-createur[!grepl('TEST',createur$Nom_Crea),] #supprimer nom "test"
-createur<-createur[!grepl('TEST',createur$Prenom_Crea),] #supprimer prénnom "test"
-createur<-subset(createur, nchar(as.character(Prenom_Crea)) > 1) #supprimer prénoms d'une seule lettre
+createur<-createur[!grepl('TEST',createur$Prenom_Crea),] #supprimer prÃ©nnom "test"
+createur<-subset(createur, nchar(as.character(Prenom_Crea)) > 1) #supprimer prÃ©noms d'une seule lettre
 createur<-subset(createur, nchar(as.character(Nom_Crea)) > 1) #supprimer noms d'une seule lettre
 createur$Email_Crea<-tolower(createur$Email_Crea)
 createur$Email_Crea<-gsub(' ','',createur$Email_Crea)
@@ -109,8 +106,8 @@ createur<-within(createur,rm("numDpt","nomDpt","nomReg","numReg"))
 
 #############titulaires###############
 colnames(titulaires)<-c("Nom_Part","Prenom_Part","Email_Part","TelephoneF_Part","TelephoneP_Part","CodePostal_Part")
-titulaires$Prenom_Part<-gsub("[[:digit:]]",NA,titulaires$Prenom_Part) #supprimer les chiffres dans les prénoms
-titulaires<-subset(titulaires, nchar(as.character(Prenom_Part)) > 1) #supprimer prénoms d'une seule lettre
+titulaires$Prenom_Part<-gsub("[[:digit:]]",NA,titulaires$Prenom_Part) #supprimer les chiffres dans les prÃ©noms
+titulaires<-subset(titulaires, nchar(as.character(Prenom_Part)) > 1) #supprimer prÃ©noms d'une seule lettre
 titulaires<-subset(titulaires, nchar(as.character(Nom_Part)) > 1) #supprimer noms d'une seule lettre
 titulaires<-unique(titulaires) #ne pas garder de doublons
 titulaires<-titulaires[!is.na(Nom_Part)]
@@ -135,7 +132,7 @@ titulaires$TelephoneP_Part<-as.integer(titulaires$TelephoneP_Part)
 titulaires$TelephoneF_Part<-as.integer(titulaires$TelephoneF_Part)
 titulaires$TelephoneF_Part<-formattelephone(titulaires$TelephoneF_Part)
 titulaires$TelephoneP_Part<-formattelephone(titulaires$TelephoneP_Part)
-titulaires<-titulaires[!is.na(titulaires$TelephoneF_Part) | !is.na(titulaires$TelephoneP_Part) | !is.na(titulaires$Email_Part),] #ne garder que les lignes qui ont au moins un numéro de téléphone ou une adresse mail
+titulaires<-titulaires[!is.na(titulaires$TelephoneF_Part) | !is.na(titulaires$TelephoneP_Part) | !is.na(titulaires$Email_Part),] #ne garder que les lignes qui ont au moins un numÃ©ro de tÃ©lÃ©phone ou une adresse mail
 titulaires$numDpt<-ifelse(grepl("^97",titulaires$CodePostal_Part), substr(titulaires$CodePostal_Part,1,3), substr(titulaires$CodePostal_Part,1,2))
 titulaires<-join(titulaires,dpt,by="numDpt")
 regtit<-table(titulaires$nomReg)
@@ -143,16 +140,16 @@ titulaires<-within(titulaires,rm("numDpt","nomDpt","nomReg"))
 titulaires$numReg<-factor(titulaires$numReg)
 
 
-#Distribution par région
+#Distribution par rÃ©gion
 regcrea<-regcrea/sum(regcrea)*100
 regtit<-regtit/sum(regtit)*100
 distriregion<-rbind(regtit,regcrea)
-rownames(distriregion)<-c("Titulaires","Créateurs")
+rownames(distriregion)<-c("Titulaires","CrÃ©ateurs")
 par(mar=c(6.5, 4, 2, 0))
-barplot(distriregion,beside=TRUE,main="Distribution des titulaires \net créateurs par région",xlab="",ylab = "Pourcentage d'individus",las=2,cex.names=0.8,col=c("darkslategrey","darkseagreen"),ylim=c(0,20),legend.text=TRUE)
+barplot(distriregion,beside=TRUE,main="Distribution des titulaires \net crÃ©ateurs par rÃ©gion",xlab="",ylab = "Pourcentage d'individus",las=2,cex.names=0.8,col=c("darkslategrey","darkseagreen"),ylim=c(0,20),legend.text=TRUE)
 
 
-#créer les tables qui recevront les résultats
+#crÃ©er les tables qui recevront les rÃ©sultats
 comparaisons_possibles<-as.numeric(nrow(titulaires))*as.numeric(nrow(createur))
 links<-NULL
 possible_links<-NULL
@@ -162,8 +159,8 @@ poids<-big.matrix(nrow=comparaisons_possibles/10,ncol=1,type="short")
 ################Comparaisons#################
 #############################################
 
-titulaires <- titulaires[sample(nrow(titulaires)),]#on rend l'ordre de titulaire aléatoire pour éviter les biais dans le débitage
-taille<-nrow(titulaires)/100 #débitage du fichier en 100 parts égales pour pouvoir effectuer les calculs avec la mémoire disponible
+titulaires <- titulaires[sample(nrow(titulaires)),]#on rend l'ordre de titulaire alÃ©atoire pour Ã©viter les biais dans le dÃ©bitage
+taille<-nrow(titulaires)/100 #dÃ©bitage du fichier en 100 parts Ã©gales pour pouvoir effectuer les calculs avec la mÃ©moire disponible
 
 titulaires0    <- data.frame(titulaires[ 1:taille,]	)					
 
@@ -174,8 +171,8 @@ gc()
 
 import_et_preparation<-Sys.time()
 
-#Ensuite, on cherche les valeurs similaires (sur la première tranche)
-createur_titulaire<-compare.linkage (createur, titulaires0, blockfld = 7,strcmp = c(1,2,3,4,5,6),strcmpfun = jarowinkler, exclude=7) #On crée un objet de comparaison
+#Ensuite, on cherche les valeurs similaires (sur la premiÃ¨re tranche)
+createur_titulaire<-compare.linkage (createur, titulaires0, blockfld = 7,strcmp = c(1,2,3,4,5,6),strcmpfun = jarowinkler, exclude=7) #On crÃ©e un objet de comparaison
 createur_titulaire<-fsWeights(createur_titulaire,m=c(0.9,0.8,0.7,0.7,0.5,0.6),u=createur_titulaire$frequencies)  #On calcule les poids pour chaque paire
 summary(createur_titulaire) #L'histogramme aide au choix des seuils
 
@@ -1179,39 +1176,39 @@ paires<-as.numeric(paires+nrow(createur_titulaire$pairs))
 gc(rm(titulaires99,createur_titulaire))
 
 #############################################
-#################Résultats###################
+#################RÃ©sultats###################
 #############################################
 
 poids<-sub.big.matrix(poids,firstRow = 1,lastRow = paires)
 poids<-poids[mwhich(x=poids, cols = 1, vals =0,comps='ge' ,op="AND")]
-#Observation de la distribution des poids de comparaison (pour amélioration future)
+#Observation de la distribution des poids de comparaison (pour amÃ©lioration future)
 library(Hmisc)
-jpeg(filename="Distribution des poids de comparaison Créateur_Titulaire.jpeg")
+jpeg(filename="Distribution des poids de comparaison CrÃ©ateur_Titulaire.jpeg")
 par(mar=c(3, 3, 1, 1),mgp=c(1.5,0.5,0))
 hist(poids,main = "Distribution des poids de comparaison",col.main="dodgerblue4", font.lab=2,col.lab="dodgerblue4",ylab="Effectifs", xlab = "Poids", labels=TRUE, col="#9BBB59", ylim=c(0,4000), xlim=c(0,65))
 Hmisc::minor.tick(nx=5,ny=0)
 dev.off()
 
 
-#Une fois fini, on observe et enregistre les liens et les possibles liens (les non liens ne sont pas nécessaires)
+#Une fois fini, on observe et enregistre les liens et les possibles liens (les non liens ne sont pas nÃ©cessaires)
 links<-arrange(links, desc(Weight), desc(Nom_Crea.1), desc(Prenom_Crea.1))
 View(links)
 possible_links<-arrange(possible_links, desc(Weight), desc(Nom_Crea.1), desc(Prenom_Crea.1))
 View(possible_links)
-write.xlsx2(links,"liens_créateurs.xlsx",sheetName="liens sûrs",showNA=FALSE)
-write.xlsx2(possible_links,"liens_créateurs.xlsx",sheetName="possibles liens",showNA=FALSE,append=TRUE)
-write.xlsx2(poids[,],"liens_créateurs.xlsx",sheetName="poids",showNA=FALSE,append=TRUE)
+write.xlsx2(links,"liens_crÃ©ateurs.xlsx",sheetName="liens sÃ»rs",showNA=FALSE)
+write.xlsx2(possible_links,"liens_crÃ©ateurs.xlsx",sheetName="possibles liens",showNA=FALSE,append=TRUE)
+write.xlsx2(poids[,],"liens_crÃ©ateurs.xlsx",sheetName="poids",showNA=FALSE,append=TRUE)
 
 
-#Calcul du temps d'exécution de l'algorithme
+#Calcul du temps d'exÃ©cution de l'algorithme
 end.time <- Sys.time()
 time.taken <- end.time - start.time
 comparaison.time<-end.time - import_et_preparation
 prep<-import_et_preparation - start.time
 
 
-#Message de fin, résumé des résultats
+#Message de fin, rÃ©sumÃ© des rÃ©sultats
 bloquees<-comparaisons_possibles-paires
-cat("Temps d'exécution total: ",time.taken,units(time.taken),"\ndont",prep,units(prep),"pour l'import et la préparation de données,\net",comparaison.time,units(comparaison.time),"pour les",paires,"comparaisons effectuées.",
-    "\n\nSur",comparaisons_possibles,"comparaisons possibles,",bloquees,"ont été bloquées (soit",bloquees/comparaisons_possibles*100,"%) en raison de région différente,\net ",paires,"ont été effectuées (soit,",paires/comparaisons_possibles*100,"%).",
-    "\n\nSur ces",paires,"paires comparées,",paires-(nrow(possible_links)+nrow(links)),"ont été qualifiées comme non-liens (soit",(paires-(nrow(possible_links)+nrow(links)))/paires*100,"%),\n",nrow(possible_links),"comme possibles liens (soit",nrow(possible_links)/paires*100,"%), et",nrow(links),"comme liens (soit",nrow(links)/paires*100,"%).")
+cat("Temps d'exÃ©cution total: ",time.taken,units(time.taken),"\ndont",prep,units(prep),"pour l'import et la prÃ©paration de donnÃ©es,\net",comparaison.time,units(comparaison.time),"pour les",paires,"comparaisons effectuÃ©es.",
+    "\n\nSur",comparaisons_possibles,"comparaisons possibles,",bloquees,"ont Ã©tÃ© bloquÃ©es (soit",bloquees/comparaisons_possibles*100,"%) en raison de rÃ©gion diffÃ©rente,\net ",paires,"ont Ã©tÃ© effectuÃ©es (soit,",paires/comparaisons_possibles*100,"%).",
+    "\n\nSur ces",paires,"paires comparÃ©es,",paires-(nrow(possible_links)+nrow(links)),"ont Ã©tÃ© qualifiÃ©es comme non-liens (soit",(paires-(nrow(possible_links)+nrow(links)))/paires*100,"%),\n",nrow(possible_links),"comme possibles liens (soit",nrow(possible_links)/paires*100,"%), et",nrow(links),"comme liens (soit",nrow(links)/paires*100,"%).")
