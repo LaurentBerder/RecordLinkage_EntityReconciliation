@@ -1,5 +1,5 @@
 
-# Démarrage ---------------------------------------------------------------
+# DÃ©marrage ---------------------------------------------------------------
 #charger librairies
 library(RecordLinkage)
 library(plyr)
@@ -12,10 +12,6 @@ library(data.table)
 library(Hmisc)
 library(bigmemory)
 options(bigmemory.typecast.warning=FALSE)
-
-
-#se situer sur le dossier ou sont les données
-setwd("C:/Users/PB00414/Desktop/Recherche/Données externes")
 
 formattelephone<-function(x)
 {
@@ -32,12 +28,12 @@ formattelephone<-function(x)
   x<-sapply(x, function(x) {ifelse(grepl("111111"   ,x), NA, x)})
 }
 
-#import des données
+#import des donnÃ©es
 full_tit<-fread("Full_Titulaires.csv") %>% as.data.table
 regions<-read_excel("reg2016.xls",sheet="Feuille1")
 dpt<-read_excel("depts2016.xls",sheet="Feuille1")
 
-#préparation
+#prÃ©paration
 regions<-regions[,c("REGION,C,2","NCC,C,70")]
 colnames(regions)<-c("numReg","nomReg")
 dpt<-dpt[,c("DEP,C,3","NCC,C,70","REGION,C,2")]
@@ -67,13 +63,13 @@ full_tit<-select(full_tit,-c(PRE_DOSS_CPAYS,PRE_PERS_TYPE))
 full_tit$numDpt<-ifelse(full_tit$PRE_DOSS_CP=="Etranger", "Etranger", ifelse(grepl("^97",full_tit$PRE_DOSS_CP), substr(full_tit$PRE_DOSS_CP,1,3), substr(full_tit$PRE_DOSS_CP,1,2)))
 full_tit<-join(full_tit,dpt,by="numDpt")
 
-#séparation
+#sÃ©paration
 temporaires<-filter(full_tit,PRE_PERS_MUNAPA>99000000) %>% as.data.table
 titulaires<-filter(full_tit,PRE_PERS_MUNAPA<99000000) %>% as.data.table
 gc(rm(formattelephone,dpt,regions),verbose=FALSE)
 
 
-# Répartition géographique-------------------------------------------------
+# RÃ©partition gÃ©ographique-------------------------------------------------
 
 data.frame(t(table(titulaires$nomReg)),rownames = "Var2") %>% select(-Var2)
 
@@ -88,7 +84,7 @@ regtit$Freq<-regtit$Freq/sum(regtit$Freq)*100
 distriregion<-cbind(regtit,regtemp)
 rownames(distriregion)<-c("Titulaires","Temporaires")
 par(mar=c(6.5, 4, 2, 0))
-barplot(distriregion,beside=TRUE,main="Distribution des titulaires \net temporaires par région",xlab="",ylab = "Pourcentage d'individus",las=2,cex.names=0.8,col=c("#A651D4", "#72C286"),ylim=c(0,20),legend.text=TRUE)
+barplot(distriregion,beside=TRUE,main="Distribution des titulaires \net temporaires par rÃ©gion",xlab="",ylab = "Pourcentage d'individus",las=2,cex.names=0.8,col=c("#A651D4", "#72C286"),ylim=c(0,20),legend.text=TRUE)
 
 agetit<-table(titulaires$ANNEE_NAISS)
 agetit<-as.data.frame(agetit/sum(agetit)*100)
@@ -102,7 +98,7 @@ distriage<-distriage[-1,]
 rownames(distriage)<-c("Titulaires","Temporaires")
 
 par(mar=c(6.5, 4, 2, 0))
-barplot(distriage,beside=TRUE,main="Distribution des titulaires \net temporaires par année de naissance",xlab="Année",ylab = "Pourcentage d'individus",las=2,cex.names=0.8,col=c("#A651D4", "#72C286"),ylim=c(0,4),legend.text=TRUE)
+barplot(distriage,beside=TRUE,main="Distribution des titulaires \net temporaires par annÃ©e de naissance",xlab="AnnÃ©e",ylab = "Pourcentage d'individus",las=2,cex.names=0.8,col=c("#A651D4", "#72C286"),ylim=c(0,4),legend.text=TRUE)
 
 gc(rm(agetit,agetemp,regtit,regtemp,distriage,distriregion),verbose=FALSE)
 
@@ -135,7 +131,7 @@ match<-distinct(match,PRE_PERS_MUNAPA.temp,PRE_PERS_MUNAPA.tit,.keep_all = TRUE)
 match<-select(match,c(PRE_PERS_MUNAPA.temp,PRE_PERS_NOMUS.temp,PRE_PERS_NOM.temp,PRE_PERS_PREUS.temp,PRE_PERS_DTNAI.temp,ANNEE_NAISS.temp,PRE_PERS_SS.temp,PRE_DOSS_TELFIXE.temp,PRE_DOSS_TELPORT.temp,PRE_DOSS_MAIL.temp,PRE_DOSS_RUE.temp,PRE_DOSS_CRUE.temp,PRE_DOSS_CP.temp,PRE_DOSS_VILLE.temp,numReg.temp,PRE_PERS_MUNAPA.tit,PRE_PERS_NOMUS.tit,PRE_PERS_NOM.tit,PRE_PERS_PREUS.tit,PRE_PERS_DTNAI.tit,ANNEE_NAISS.tit,PRE_PERS_SS.tit,PRE_DOSS_TELFIXE.tit,PRE_DOSS_TELPORT.tit,PRE_DOSS_MAIL.tit,PRE_DOSS_RUE.tit,PRE_DOSS_CRUE.tit,PRE_DOSS_CP.tit,PRE_DOSS_VILLE.tit,numReg.tit,Methode))
 #gc(rm(email,portable,SS),verbose=FALSE)
 
-#supprimer les résultats positifs de la liste pour les raccrochements qui suivent
+#supprimer les rÃ©sultats positifs de la liste pour les raccrochements qui suivent
 temporaires<-filter(temporaires,!(PRE_PERS_MUNAPA %in% match$PRE_PERS_MUNAPA.temp))
 titulaires<-filter(titulaires,!(PRE_PERS_MUNAPA %in% match$PRE_PERS_MUNAPA.tit))
 
@@ -2343,10 +2339,10 @@ paires<-as.numeric(paires+nrow(reclink$pairs))
 gc(rm(titulaires199,reclink),verbose = FALSE)
 
 
-# Résultats ---------------------------------------------------------------
+# RÃ©sultats ---------------------------------------------------------------
 #observation des poids
-poids<-sub.big.matrix(poids,firstRow = 1,lastRow = paires) #la matrice poids était trop grande
-poidsplus<-poids[mwhich(x=poids, cols = 1, vals =0,comps='ge' ,op="AND")] #ne garder que les valeurs supérieures à 0
+poids<-sub.big.matrix(poids,firstRow = 1,lastRow = paires) #la matrice poids Ã©tait trop grande
+poidsplus<-poids[mwhich(x=poids, cols = 1, vals =0,comps='ge' ,op="AND")] #ne garder que les valeurs supÃ©rieures Ã  0
 hist(poidsplus,ylab="Effectifs", xlab = "Poids", ylim=c(0,3000), labels=TRUE, main="Distribution des poids de comparaison\nFormulaires", col="#F59F1E", col.main="#F59F1E")
 Hmisc::minor.tick(nx=5,ny=0)
 
@@ -2354,7 +2350,7 @@ Hmisc::minor.tick(nx=5,ny=0)
 colnames(links)<-c("ID.temp","Muna.temp","NomUsuel.temp","NomFamille.temp","Prenom.temp","DateNaissance.temp","SS.temp","TelFixe.temp","TelPort.temp","Mail.temp","Rue.temp","CRue.temp","CodePostal.temp","Ville.temp","AnneeNaiss.temp","Region.temp","Id.tit","Muna.tit","NomUsuel.tit","NomFamille.tit","Prenom.tit","DateNaissance.tit","SS.tit","TelFixe.tit","TelPort.tit","Mail.tit","Rue.tit","CRue.tit","CodePostal.tit","Ville.tit","AnneeNaiss.tit","Region.tit","Poids")
 colnames(possible_links)<-c("ID.temp","Muna.temp","NomUsuel.temp","NomFamille.temp","Prenom.temp","DateNaissance.temp","SS.temp","TelFixe.temp","TelPort.temp","Mail.temp","Rue.temp","CRue.temp","CodePostal.temp","Ville.temp","AnneeNaiss.temp","Region.temp","Id.tit","Muna.tit","NomUsuel.tit","NomFamille.tit","Prenom.tit","DateNaissance.tit","SS.tit","TelFixe.tit","TelPort.tit","Mail.tit","Rue.tit","CRue.tit","CodePostal.tit","Ville.tit","AnneeNaiss.tit","Region.tit","Poids")
 colnames(match)<-c("Muna.temp","NomUsuel.temp","NomFamille.temp","Prenom.temp","DateNaissance.temp","AnneeNaiss.temp","SS.temp","TelFixe.temp","TelPort.temp","Mail.temp","Rue.temp","CRue.temp","CodePostal.temp","Ville.temp","Region.temp","Muna.tit","NomUsuel.tit","NomFamille.tit","Prenom.tit","DateNaissance.tit","AnneeNaiss.tit","SS.tit","TelFixe.tit","TelPort.tit","Mail.tit","Rue.tit","CRue.tit","CodePostal.tit","Ville.tit","Region.tit","Methode")
-#Ordonner les résultats
+#Ordonner les rÃ©sultats
 match<-arrange(match, desc(Methode), NomFamille.temp, Prenom.temp) %>%
   select(-c(AnneeNaiss.temp,AnneeNaiss.tit,Region.temp,Region.tit))
 links<-arrange(links, desc(Poids), NomFamille.temp, Prenom.temp) %>% 
@@ -2362,12 +2358,12 @@ links<-arrange(links, desc(Poids), NomFamille.temp, Prenom.temp) %>%
 possible_links<-arrange(possible_links, desc(Poids), NomFamille.temp, Prenom.temp) %>% 
   select(-c(AnneeNaiss.temp,AnneeNaiss.tit,Region.temp,Region.tit))
 
-#Ecriture des résultats sur un document excel
-xl<-createWorkbook() #crée un objet pour excel
-addWorksheet(xl,"Exact",tabColour = "green",header = c("Rattachement Formulaires","Liens par valeurs exactes","")) #crée un onglet dans cet objet excel
-writeDataTable(xl,"Exact",match,headerStyle = createStyle(textRotation = 45)) #assigne une table à l'onglet
-addWorksheet(xl,"Liens Sûrs",tabColour = "orange",header = c("Rattachement Formulaires","Record Linkage","Liens"))
-writeDataTable(xl,"Liens Sûrs",links, colNames=TRUE, headerStyle = createStyle(textRotation = 45))
+#Ecriture des rÃ©sultats sur un document excel
+xl<-createWorkbook() #crÃ©e un objet pour excel
+addWorksheet(xl,"Exact",tabColour = "green",header = c("Rattachement Formulaires","Liens par valeurs exactes","")) #crÃ©e un onglet dans cet objet excel
+writeDataTable(xl,"Exact",match,headerStyle = createStyle(textRotation = 45)) #assigne une table Ã  l'onglet
+addWorksheet(xl,"Liens SÃ»rs",tabColour = "orange",header = c("Rattachement Formulaires","Record Linkage","Liens"))
+writeDataTable(xl,"Liens SÃ»rs",links, colNames=TRUE, headerStyle = createStyle(textRotation = 45))
 addWorksheet(xl,"Liens Possibles",tabColour = "red",header = c("Rattachement Formulaires","Record Linkage","Liens possibles"))
 writeDataTable(xl,"Liens Possibles",possible_links,headerStyle = createStyle(textRotation = 45))
 Sys.setenv(R_ZIPCMD= "C:/RBuildTools/3.3/bin/zip")   
