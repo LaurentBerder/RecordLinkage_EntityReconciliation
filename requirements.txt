@@ -1,0 +1,10 @@
+RecordLinkage==0.4-10
+plyr==1.8.4
+dplyr==0.5.0
+readxl==0.1.1
+xlsx==0.5.7
+openxlsx==4.0.0
+stringr==1.1.0
+data.table==1.10.0
+Hmisc==4.0-2
+bigmemory==4.5.19
