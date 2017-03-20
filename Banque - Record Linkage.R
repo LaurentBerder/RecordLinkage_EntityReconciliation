@@ -12,30 +12,26 @@ library(bigmemory)
 options(bigmemory.typecast.warning=FALSE)
 
 
-#se situer sur le dossier ou sont les données
-setwd("C:/Users/PB00414/Desktop/Recherche/Données externes")
-
-
 #############################################
-##############Importer données###############
+##############Importer donnÃ©es###############
 #############################################
 entreprise<-fread(input="ENT_GEN2.csv")
 colnames(entreprise)<-c("Muna","Siret","Raison_Sociale","Adresse","CodePostal","Commune","APE","NAF","NACE","CategorieJuridique","DateCreation","IBANpays","IBANcode","IBANcompte")
 lourmel<-fread(input="ENT_lourmel.csv")
 colnames(lourmel)<-c("Muna","Siret","Raison_Sociale","Adresse","CodePostal","Commune","APE","NAF","NACE","CategorieJuridique","DateCreation","IBANpays","IBANcode","IBANcompte")
 
-BRD<-fread("C:/Users/PB00414/Desktop/Recherche/Données externes/Banque/BRD CAMT054.csv")
+BRD<-fread("C:/Users/PB00414/Desktop/Recherche/DonnÃ©es externes/Banque/BRD CAMT054.csv")
 colnames(BRD)<-c("MessageIdentification","MCreationDateTime","IdentifiantCompte","ACreationDateTime","IBAN","ReferenceVirement","BIC","NbEntries","Somme","Montant","Devise","CreditDebitCode","Statut","BookingDate","DateComptabilisation","DomainCode","ExternalBankTransactionFamilyCode","ExternalBankTransactionSubfamilyCode","ProprietaryCode","AccountServicerReference","EndToEndIdentification","MontantTransaction","DeviseCompte","Nom","IBANEmetteur","Nom2","noname1","noname2","IdentifiantBanque","NomBanque","Motif")
-SGN<-fread("C:/Users/PB00414/Desktop/Recherche/Données externes/Banque/SGN CAMT054.csv")
+SGN<-fread("C:/Users/PB00414/Desktop/Recherche/DonnÃ©es externes/Banque/SGN CAMT054.csv")
 colnames(SGN)<-c("MessageIdentification","MCreationDateTime","IdentifiantCompte","ACreationDateTime","IBAN","DeviseCompte","BIC","NbEntries","Somme","NbEntries3","Somme4","Montant","Devise","CreditDebitCode","Statut","ExternalBankTransactionDomain1Code","ExternalBankTransactionFamilyCode","ExternalBankTransactionSubfamilyCode","Code","BankTransactionCode","ReferenceCompte","EndToEndIdentification","Montant2","Devise2","Montant3","Devise3","Nom","Pays","Adresse","IBANEmetteur","ReferenceTransaction","Nom13","Motif","AdditionalEntryInformation")
-BNP<-fread("C:/Users/PB00414/Desktop/Recherche/Données externes/Banque/BNP CAMT054.csv")
+BNP<-fread("C:/Users/PB00414/Desktop/Recherche/DonnÃ©es externes/Banque/BNP CAMT054.csv")
 colnames(BNP)<-c("MessageIdentification","MCreationDateTime","IdentifiantCompte","ACreationDateTime","IBAN","DeviseCompte","BIC","NbEntries","Somme","NbEntries3","Somme4","Montant","Devise","CreditDebitCode","Statut","Date","AccountServicerReference","ExternalBankTransactionDomain1Code","ExternalBankTransactionFamilyCode","ExternalBankTransactionSubfamilyCode","EndToEndIdentification","Nom","Pays","Adresse","Motif")
-CIC<-fread("C:/Users/PB00414/Desktop/Recherche/Données externes/Banque/CIC CAMT054.csv")
+CIC<-fread("C:/Users/PB00414/Desktop/Recherche/DonnÃ©es externes/Banque/CIC CAMT054.csv")
 colnames(CIC)<-c("MessageIdentification","MCreationDateTime","PageNb","LastPgInd","IdentifiantCompte","ACreationDateTime","IBAN","DeviseCompte","BIC","NbEntries","Somme","NbEntries3","Somme4","NtryRef","Montant","Devise","CreditDebitCode","Statut","Date","Date5","ExternalBankTransactionDomain1Code","ExternalBankTransactionFamilyCode","ExternalBankTransactionSubfamilyCode","noname1","ReferenceCompte","EndToEndIdentification","Montant8","Devise9","Nom","Adresse","Rmtld","Motif")
 
 
 #############################################
-##############Préparer données###############
+##############PrÃ©parer donnÃ©es###############
 #############################################
 
 ############Entreprises#################
@@ -71,7 +67,7 @@ lourmel[lourmel==""]<-NA
 BRD$Banque<-"BRD"
 BRD[BRD==""]<-NA
 BRD$Adresse<-NA #le champ Adresse n'existe pas dans ce fichier, et manque pour plusieurs fonctions suivantes
-BRD<-filter(BRD,!duplicated(AccountServicerReference)&!is.na(MontantTransaction)) #supprimer lignes dupliquées en parsant l'XML
+BRD<-filter(BRD,!duplicated(AccountServicerReference)&!is.na(MontantTransaction)) #supprimer lignes dupliquÃ©es en parsant l'XML
 for(i in 1:nrow(BRD)) {ifelse(grepl("\\d\\d\\d\\d\\d\\d\\d\\d\\.\\d-\\d\\d\\d\\d\\.\\d",BRD$EndToEndIdentification[i]), BRD$Siret[i]<-strapplyc(BRD$EndToEndIdentification[i], "\\d\\d\\d\\d\\d\\d\\d\\d\\.\\d-\\d\\d\\d\\d.\\d"), BRD$Siret[i]<-NA)}
 for(i in 1:nrow(BRD)) {if(grepl("S\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d",BRD$EndToEndIdentification[i])) {BRD$Siret[i]<-gsub("S","",strapplyc(BRD$EndToEndIdentification[i], "S\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d", simplify = TRUE))}}
 for(i in 1:nrow(BRD)) {if(is.na(BRD$Siret[i]) & grepl("siret|Ref|adh",BRD$EndToEndIdentification[i],ignore.case=TRUE)) BRD$Siret[i]<-substr(gsub("[::A-Z::]|/|\\.|-|\\s","",gsub(".*siret|.*reference|.*ref|.*adh","", BRD$EndToEndIdentification[i],ignore.case=TRUE)),1,14)}
@@ -94,7 +90,7 @@ BRD$CodePostal[BRD$CodePostal=="NULL"]<-NA
 
 SGN$Banque<-"SGN"
 SGN[SGN==""]<-NA
-SGN<-filter(SGN,is.na(Pays)) #supprimer lignes dupliquées en parsant l'XML
+SGN<-filter(SGN,is.na(Pays)) #supprimer lignes dupliquÃ©es en parsant l'XML
 SGN<-filter(SGN,!duplicated(Montant))
 for(i in 1:nrow(SGN)) {ifelse(grepl("\\d\\d\\d\\d\\d\\d\\d\\d\\.\\d-\\d\\d\\d\\d\\.\\d",SGN$EndToEndIdentification[i]), SGN$Siret[i]<-strapplyc(SGN$EndToEndIdentification[i], "\\d\\d\\d\\d\\d\\d\\d\\d\\.\\d-\\d\\d\\d\\d.\\d"), SGN$Siret[i]<-NA)}
 for(i in 1:nrow(SGN)) {if(grepl("S\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d",SGN$EndToEndIdentification[i])) {SGN$Siret[i]<-gsub("S","",strapplyc(SGN$EndToEndIdentification[i], "S\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d", simplify = TRUE))}}
@@ -120,7 +116,7 @@ SGN$CodePostal[SGN$CodePostal=="NULL"]<-NA
 BNP$Banque<-"BNP"
 BNP[BNP==""]<-NA
 BNP$IBANEmetteur<-NA #le champ IBANEmetteur n'existe pas dans ce fichier, et manque pour plusieurs fonctions suivantes
-BNP<-filter(BNP,!duplicated(EndToEndIdentification)) #supprimer lignes dupliquées en parsant l'XML
+BNP<-filter(BNP,!duplicated(EndToEndIdentification)) #supprimer lignes dupliquÃ©es en parsant l'XML
 for(i in 1:nrow(BNP)) {ifelse(grepl("\\d\\d\\d\\d\\d\\d\\d\\d\\.\\d-\\d\\d\\d\\d\\.\\d",BNP$EndToEndIdentification[i]), BNP$Siret[i]<-strapplyc(BNP$EndToEndIdentification[i], "\\d\\d\\d\\d\\d\\d\\d\\d\\.\\d-\\d\\d\\d\\d.\\d"), BNP$Siret[i]<-NA)}
 for(i in 1:nrow(BNP)) {if(grepl("S\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d",BNP$EndToEndIdentification[i])) {BNP$Siret[i]<-gsub("S","",strapplyc(BNP$EndToEndIdentification[i], "S\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d", simplify = TRUE))}}
 for(i in 1:nrow(BNP)) {if(is.na(BNP$Siret[i]) & grepl("siret|Ref|adh",BNP$EndToEndIdentification[i],ignore.case=TRUE)) BNP$Siret[i]<-substr(gsub("[::A-Z::]|/|\\.|-|\\s","",gsub(".*siret|.*reference|.*ref|.*adh","", BNP$EndToEndIdentification[i],ignore.case=TRUE)),1,14)}
@@ -170,18 +166,18 @@ import_et_preparation<-Sys.time()
 ####################################################
 ####################Match exact#####################
 ####################################################
-#Première étape, matcher par IBAN si possible: on ne peut travailler que sur SGN et BRD
+#PremiÃ¨re Ã©tape, matcher par IBAN si possible: on ne peut travailler que sur SGN et BRD
 SGNentreprise<-merge(x= SGN, y=entreprise, by.x='IBANEmetteur', by.y='IBANcompte')
 SGNentreprise$numDpt.x<-ifelse(grepl("^97",SGNentreprise$CodePostal.x), substr(SGNentreprise$CodePostal.x,1,3), substr(SGNentreprise$CodePostal.x,1,2))
-SGN<-filter(SGN,!(IBANEmetteur %in% SGNentreprise$IBANEmetteur)) #supprimer les résultats positifs de la liste pour les raccrochements qui suivent
+SGN<-filter(SGN,!(IBANEmetteur %in% SGNentreprise$IBANEmetteur)) #supprimer les rÃ©sultats positifs de la liste pour les raccrochements qui suivent
 
 
 BRDlourmel<-merge(x=BRD, y=lourmel, by.x='IBANEmetteur', by.y='IBAN')
 BRDlourmel$numDpt.x<-ifelse(grepl("^97",BRDlourmel$CodePostal.x), substr(BRDlourmel$CodePostal.x,1,3), substr(BRDlourmel$CodePostal.x,1,2))
-BRD<-filter(BRD,!(IBANEmetteur %in% BRDlourmel$IBANEmetteur)) #supprimer les résultats positifs de la liste pour les raccrochements qui suivent
+BRD<-filter(BRD,!(IBANEmetteur %in% BRDlourmel$IBANEmetteur)) #supprimer les rÃ©sultats positifs de la liste pour les raccrochements qui suivent
 
 
-#Deuxième étape, matcher par Muna, Siret et/ou Siren si possible
+#DeuxiÃ¨me Ã©tape, matcher par Muna, Siret et/ou Siren si possible
 SGN1<-select(SGN,c(Nom,Adresse,CodePostal,Motif,Siret,Siren,Muna,IBANEmetteur,Banque))
 BNP1<-select(BNP,c(Nom,Adresse,CodePostal,Motif,Siret,Siren,Muna,IBANEmetteur,Banque))
 CIC1<-select(CIC,c(Nom,Adresse,CodePostal,Motif,Siret,Siren,Muna,IBANEmetteur,Banque))
@@ -194,11 +190,11 @@ banque$numDpt<-ifelse(grepl("^97",banque$CodePostal), substr(banque$CodePostal,1
 
 #matchs
 banquentreprise<-merge(x=banque, y=entreprise, by.x='Muna', by.y='Muna',na.omit=TRUE)
-banque<-filter(banque,!(Motif %in% banquentreprise$Motif)) #supprimer les résultats positifs de la liste pour les raccrochements qui suivent
+banque<-filter(banque,!(Motif %in% banquentreprise$Motif)) #supprimer les rÃ©sultats positifs de la liste pour les raccrochements qui suivent
 banquentreprise<-rbind(banquentreprise,merge(x=banque, y=entreprise, by.x='Siret', by.y='Siret',na.omit=TRUE),fill=TRUE)
-banque<-filter(banque,!(Motif %in% banquentreprise$Motif)) #supprimer les résultats positifs de la liste pour les raccrochements qui suivent
+banque<-filter(banque,!(Motif %in% banquentreprise$Motif)) #supprimer les rÃ©sultats positifs de la liste pour les raccrochements qui suivent
 banquentreprise<-rbind(banquentreprise,merge(x=banque, y=entreprise, by.x='Siren', by.y='Siren',na.omit=TRUE),fill=TRUE)
-banque<-filter(banque,!(Motif %in% banquentreprise$Motif)) #supprimer les résultats positifs de la liste pour les raccrochements qui suivent
+banque<-filter(banque,!(Motif %in% banquentreprise$Motif)) #supprimer les rÃ©sultats positifs de la liste pour les raccrochements qui suivent
 
 banquelourmel<-merge(x=banque, y=lourmel, by.x='Muna', by.y='Muna',na.omit=TRUE)
 banque<-filter(banque,!(Motif %in% banquelourmel$Motif))
@@ -208,7 +204,7 @@ banquelourmel<-rbind(banquelourmel,merge(x=banque, y=lourmel, by.x='Siren', by.y
 banque<-filter(banque,!(Motif %in% banquelourmel$Motif))
 
 
-#On combine tous les résultats positifs ensemble
+#On combine tous les rÃ©sultats positifs ensemble
 SGNentreprise<-select(SGNentreprise,c(Nom,Adresse.x,numDpt.x, IBANEmetteur,Muna.x,Siret.x,Siren.x,Banque,Raison_Sociale,Adresse.y,numDpt,IBAN.y,Muna.y,Siret.y,Siren.y))
 colnames(SGNentreprise)<-c("Nom_banque","Adresse_banque","Dpt_banque","IBAN_banque","Muna_banque","Siret_banque","Siren_banque","Banque","Raison_Sociale","Adresse","Dpt","IBAN","Muna","Siret","Siren")
 BRDlourmel<-select(BRDlourmel,c(Nom,Adresse.x,numDpt.x, IBANEmetteur,Muna.x,Siret.x,Siren.x,Banque,Raison_Sociale,Adresse.y,numDpt,IBAN,Muna.y),Siret.y,Siren.y)
@@ -231,7 +227,7 @@ match_exact.time<-Sys.time()
 comparaisons_possibles<-as.numeric(nrow(banque)*(nrow(entreprise)+nrow(lourmel)))
 poids<-big.matrix(nrow=comparaisons_possibles,ncol=1,type="short")
 
-#Troisième étape, record linkage par raison sociale (et adresse si disponible)
+#TroisiÃ¨me Ã©tape, record linkage par raison sociale (et adresse si disponible)
 reclinklourm<-compare.linkage(select(BRD,c(Nom,Adresse,numDpt,Siret,Siren,Muna,Banque)),select(lourmel,c(Raison_Sociale,Adresse,numDpt,Siret,Siren,Muna,IBANclef)), strcmp=1, strcmpfun=jarowinkler, exclude=2:7)
 reclinklourm<-fsWeights(reclinklourm,m=.9,u=reclinklourm$frequencies)
 summary(reclinklourm)
@@ -244,7 +240,7 @@ gc(rm(reclinklourm))
 
 banque<-select(banque,c(Nom,Adresse,numDpt,Siret,Siren,Muna,Banque))
 entr0<-select(entreprise,c(Raison_Sociale,Adresse,numDpt,Siret,Siren,Muna,IBANclef))
-entr1<-entr0[1:(nrow(entr0)*.05),] #Il faut découper la table entreprise pour raison de mémoire
+entr1<-entr0[1:(nrow(entr0)*.05),] #Il faut dÃ©couper la table entreprise pour raison de mÃ©moire
 
 reclinkentr<-compare.linkage(banque,entr1, strcmp=1:2, strcmpfun=jarowinkler, exclude=3:7)
 reclinkentr<-fsWeights(reclinkentr,m=c(.9,.6),u=reclinkentr$frequencies)
@@ -449,14 +445,14 @@ record_linkage<-Sys.time()
 
 
 poids<-poids[1:paires,]
-#Observation de la distribution des poids de comparaison (pour amélioration future)
+#Observation de la distribution des poids de comparaison (pour amÃ©lioration future)
 jpeg(filename="Distribution des poids de comparaison Banque-Entreprise.jpeg")
 par(mar=c(3, 3, 1, 1),mgp=c(1.5,0.5,0))
 hist(poids[poids>0],main = "Distribution des poids de comparaison",col.main="dodgerblue4", font.lab=2,col.lab="dodgerblue4",ylab="Effectifs", xlab = "Poids", labels=TRUE, col="#9BBB59", breaks=30, xlim=c(min(poids[poids>0]),max(poids)+5))
 dev.off()
 
 
-#Une fois fini, on observe et enregistre les liens et les possibles liens (les non liens ne sont pas nécessaires)
+#Une fois fini, on observe et enregistre les liens et les possibles liens (les non liens ne sont pas nÃ©cessaires)
 linksentr<-arrange(linksentr,desc(id1),desc(Weight))
 View(linksentr)
 possible_linksentr<-arrange(possible_linksentr, desc(id1), desc(Weight))
@@ -464,7 +460,7 @@ View(possible_linksentr)
 match_MunaSiretSiren<-arrange(match_MunaSiretSiren, desc(Muna), desc(Siret), desc(Siren))
 write.xlsx2(match_IBAN,"liens_banques.xlsx",sheetName="match IBAN",showNA=FALSE)
 write.xlsx2(match_MunaSiretSiren,"liens_banques.xlsx",sheetName="match Muna-Siret-Siren",showNA=FALSE,append=TRUE)
-write.xlsx2(select(linksentr,-IBANclef),"liens_banques.xlsx",sheetName="RaisonSociale: liens sûrs",showNA=FALSE,append=TRUE)
+write.xlsx2(select(linksentr,-IBANclef),"liens_banques.xlsx",sheetName="RaisonSociale: liens sÃ»rs",showNA=FALSE,append=TRUE)
 write.xlsx2(select(possible_linksentr,-IBANclef),"liens_banques.xlsx",sheetName="RaisonSociale: possibles liens",showNA=FALSE,append=TRUE)
 
 
@@ -481,7 +477,7 @@ bloquees<-comparaisons_possibles-paires
 nombre_entreprises_liens<-length(unique(linksentr$id1))
 nombre_entreprises_possible<-length(unique(possible_linksentr$id1))
 
-cat("Temps d'exécution total: ",time.taken,units(time.taken),"\ndont",prep,units(prep),"pour l'import et la préparation de données,\net",comparaison.time,units(comparaison.time),"dont",exact.comp.time,units(exact.comp.time),"pour le raccrochement par IBAN, Siret ou Muna.\n\n",
-    nrow(match_IBAN),"rattachements ont été effectués par IBAN, et",nrow(match_MunaSiretSiren),"par Muna, Siret ou Siren.",
-    "\n\nSur",paires,"comparaisons possibles,",paires-(nrow(possible_linksentr)+nrow(linksentr)),"ont été qualifiées comme non-liens (soit",(paires-(nrow(possible_linksentr)+nrow(linksentr)))/paires*100,"%),\n",nrow(possible_linksentr),"(représentant",nombre_entreprises_possible,"entreprises) comme possibles liens (soit",nrow(possible_linksentr)/paires*100,"%), et\n",nrow(linksentr),"(représentant",nombre_entreprises_liens,"entreprises) comme liens (soit",nrow(linksentr)/paires*100,"%).")
+cat("Temps d'exÃ©cution total: ",time.taken,units(time.taken),"\ndont",prep,units(prep),"pour l'import et la prÃ©paration de donnÃ©es,\net",comparaison.time,units(comparaison.time),"dont",exact.comp.time,units(exact.comp.time),"pour le raccrochement par IBAN, Siret ou Muna.\n\n",
+    nrow(match_IBAN),"rattachements ont Ã©tÃ© effectuÃ©s par IBAN, et",nrow(match_MunaSiretSiren),"par Muna, Siret ou Siren.",
+    "\n\nSur",paires,"comparaisons possibles,",paires-(nrow(possible_linksentr)+nrow(linksentr)),"ont Ã©tÃ© qualifiÃ©es comme non-liens (soit",(paires-(nrow(possible_linksentr)+nrow(linksentr)))/paires*100,"%),\n",nrow(possible_linksentr),"(reprÃ©sentant",nombre_entreprises_possible,"entreprises) comme possibles liens (soit",nrow(possible_linksentr)/paires*100,"%), et\n",nrow(linksentr),"(reprÃ©sentant",nombre_entreprises_liens,"entreprises) comme liens (soit",nrow(linksentr)/paires*100,"%).")
 
